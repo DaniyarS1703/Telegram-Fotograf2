@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Редактировать календарь{% endblock %}
+
+{% block extra_head %}
+<style>
+  /* Стиль для выделения выбранных (занятых) дат */
+  .busy-date a {
+    background-color: red !important;
+    color: white !important;
+  }
+  /* Стили для неактивных (прошлых) дат: немного бледные */
+  .ui-datepicker .ui-state-disabled {
+    opacity: 0.5;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+  <h2>Редактировать календарь</h2>
+  <p>Нажмите на даты, чтобы отметить их как занятые (выделятся красным). Повторный клик снимает отметку.<br>
+     Даты до сегодняшнего дня недоступны.</p>
+  <form action="{{ url_for('edit_calendar', photographer_id=photographer.id) }}" method="post">
+    <!-- Элемент для выбора дат -->
+    <div id="datepicker"></div>
+    <!-- Скрытое поле для передачи выбранных дат -->
+    <input type="hidden" name="unavailable_dates" id="unavailable_dates">
+    <br>
+    <button type="submit" class="btn">Сохранить изменения</button>
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/i18n/datepicker-ru.min.js"></script>
+  <script>
+    $.datepicker.setDefaults($.datepicker.regional["ru"]);
+
+    // Извлекаем существующие даты (если они есть) из переменной, переданной маршрутом
+    let existingDatesString = "{{ existing_dates }}";
+    let selectedDates = [];
+    if(existingDatesString.trim().length > 0) {
+      selectedDates = existingDatesString.split(",").map(s => s.trim());
+    }
+    // Инициализируем скрытое поле значением выбранных дат
+    $("#unavailable_dates").val(selectedDates.join(", "));
+
+    $("#datepicker").datepicker({
+      dateFormat: "dd-mm-yy",
+      minDate: 0,  // Отключаем даты до сегодняшнего дня
+      beforeShowDay: function(date) {
+        let d = $.datepicker.formatDate("dd-mm-yy", date);
+        if (selectedDates.indexOf(d) !== -1) {
+          return [true, "busy-date", "Недоступно"];
+        }
+        return [true, "", "Доступно"];
+      },
+      onSelect: function(dateText, inst) {
+        let index = selectedDates.indexOf(dateText);
+        if (index === -1) {
+          selectedDates.push(dateText);
+        } else {
+          selectedDates.splice(index, 1);
+        }
+        // Обновляем скрытое поле выбранными датами
+        $("#unavailable_dates").val(selectedDates.join(", "));
+        // Обновляем отображение календаря
+        $(this).datepicker("refresh");
+      }
+    });
+  </script>
+{% endblock %}

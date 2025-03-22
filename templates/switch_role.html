@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}Стать фотографом{% endblock %}
+
+{% block extra_head %}
+<style>
+  /* Стили для форм, чтобы поля выглядели аккуратно */
+  .form-group {
+    margin-bottom: 15px;
+  }
+  .form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  .form-group input[type="text"],
+  .form-group input[type="file"],
+  .form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 16px;
+  }
+
+  /* Стили кнопки "Подать заявку" */
+  .btn {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  .btn:hover {
+    background-color: #0056b3;
+  }
+
+  /* Стили для предпросмотра изображений */
+  .preview-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .preview-container img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+</style>
+
+<script>
+  // Функция для предпросмотра выбранных файлов (аватар или портфолио)
+  function previewFiles(input, previewContainerId) {
+    const previewContainer = document.getElementById(previewContainerId);
+    previewContainer.innerHTML = '';  // Очищаем контейнер при каждом новом выборе
+
+    if (!input.files || input.files.length === 0) {
+      return;
+    }
+
+    // Пробегаемся по всем выбранным файлам
+    Array.from(input.files).forEach(file => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        // Создаём миниатюру изображения
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        previewContainer.appendChild(img);
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+</script>
+{% endblock %}
+
+{% block content %}
+  <!-- Кнопка выхода (возврат назад) -->
+  <a href="javascript:window.history.back()" class="exit-btn" title="Вернуться назад">
+    <i class="fa-solid fa-xmark"></i>
+  </a>
+
+  <!-- Заголовок в том же стиле, что и в profile.html -->
+  <div class="profile-header">
+    <div class="profile-info">
+      <h2>Стать фотографом</h2>
+    </div>
+  </div>
+
+  <!-- Форма в блоке, аналогичном .profile-description -->
+  <div class="profile-description">
+    <h3>Заполните данные для регистрации фотографа</h3>
+    <form action="{{ url_for('switch_role', tg_id=client.telegram_id) }}" method="post" enctype="multipart/form-data">
+      <!-- О себе -->
+      <div class="form-group">
+        <label for="about">О себе:</label>
+        <textarea id="about" name="about" rows="3" placeholder="Расскажите о себе"></textarea>
+      </div>
+
+      <!-- Опыт -->
+      <div class="form-group">
+        <label for="experience">Опыт:</label>
+        <input type="text" id="experience" name="experience" placeholder="Ваш опыт">
+      </div>
+
+      <!-- Оборудование -->
+      <div class="form-group">
+        <label for="equipment">Оборудование:</label>
+        <input type="text" id="equipment" name="equipment" placeholder="Укажите оборудование">
+      </div>
+
+      <!-- Аватар (с предпросмотром) -->
+      <div class="form-group">
+        <label for="avatar_file">Загрузите аватар (файл):</label>
+        <input 
+          type="file" 
+          id="avatar_file" 
+          name="avatar_file" 
+          accept="image/*" 
+          onchange="previewFiles(this, 'avatar-preview')"
+        >
+        <!-- Контейнер для предпросмотра аватара -->
+        <div id="avatar-preview" class="preview-container"></div>
+      </div>
+
+      <!-- Портфолио (с предпросмотром нескольких файлов) -->
+      <div class="form-group">
+        <label for="portfolio_files">Портфолио (несколько файлов):</label>
+        <input 
+          type="file" 
+          id="portfolio_files" 
+          name="portfolio_files" 
+          accept="image/*" 
+          multiple 
+          onchange="previewFiles(this, 'portfolio-preview')"
+        >
+        <!-- Контейнер для предпросмотра портфолио -->
+        <div id="portfolio-preview" class="preview-container"></div>
+      </div>
+
+      <button type="submit" class="btn">Подать заявку</button>
+    </form>
+  </div>
+{% endblock %}
