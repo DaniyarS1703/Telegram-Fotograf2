@@ -331,6 +331,9 @@
       object-fit: contain;
       display: block;
       margin: 0 auto;
+      /* Начальное состояние (масштаб 1) */
+      transform: scale(1);
+      transition: transform 0.1s ease-out;
     }
     /* Стрелки */
     .modal-arrow {
@@ -558,6 +561,9 @@
 
       // Показываем полноэкранное модальное окно
       imageModalWrapper.addClass("open");
+      // Сбрасываем масштаб (зум) на 1 при открытии
+      zoomScale = 1;
+      modalImg.css("transform", "scale(1)");
     });
 
     // Закрытие окна по кнопке
@@ -565,9 +571,8 @@
       imageModalWrapper.removeClass("open");
     });
 
-    // Закрытие окна при клике по фону (если хотите закрывать и так)
+    // Закрытие окна при клике по фону
     imageModalWrapper.on("click", function(e) {
-      // Проверяем, что клик был по самому wrapper, а не по картинке или стрелкам
       if (e.target.id === "image-modal-wrapper") {
         imageModalWrapper.removeClass("open");
       }
@@ -579,6 +584,9 @@
       if(currentPortfolio.length > 0) {
         currentIndex = (currentIndex - 1 + currentPortfolio.length) % currentPortfolio.length;
         modalImg.attr("src", currentPortfolio[currentIndex]);
+        // Сброс зума
+        zoomScale = 1;
+        modalImg.css("transform", "scale(1)");
       }
     });
     $("#modal-right").on("click", function(e) {
@@ -586,7 +594,25 @@
       if(currentPortfolio.length > 0) {
         currentIndex = (currentIndex + 1) % currentPortfolio.length;
         modalImg.attr("src", currentPortfolio[currentIndex]);
+        // Сброс зума
+        zoomScale = 1;
+        modalImg.css("transform", "scale(1)");
       }
+    });
+
+    // Только зум колёсиком, без перетаскивания
+    let zoomScale = 1;
+    modalImg.on("wheel", function(e) {
+      e.preventDefault();
+      let delta = e.originalEvent.deltaY;
+      if(delta < 0) {
+        // крутим колёсико "вверх" => увеличиваем
+        zoomScale += 0.1;
+      } else {
+        // крутим колёсико "вниз" => уменьшаем, но не меньше 1
+        zoomScale = Math.max(1, zoomScale - 0.1);
+      }
+      modalImg.css("transform", `scale(${zoomScale})`);
     });
 
     /* ------------------ Горизонтальная прокрутка портфолио в профиле ------------------ */
