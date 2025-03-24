@@ -10,7 +10,9 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.css">
   <!-- Подключаем Font Awesome для иконок -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
   <style>
+    /* ------------------- Общие стили страницы ------------------- */
     body {
       margin: 0;
       padding: 20px;
@@ -26,7 +28,6 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
       position: relative;
     }
-    /* Кнопка выхода */
     .exit-btn {
       position: absolute;
       top: 15px;
@@ -86,6 +87,8 @@
       font-size: 18px;
       color: #444;
     }
+
+    /* ------------------- Портфолио с кнопками-стрелками ------------------- */
     .portfolio {
       margin-bottom: 25px;
     }
@@ -95,20 +98,45 @@
       font-size: 24px;
       color: #333;
     }
+    .portfolio-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .arrow {
+      background-color: #eee;
+      border: none;
+      font-size: 24px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      margin: 0 5px;
+    }
+    .arrow:hover {
+      background-color: #ddd;
+    }
     .portfolio-images {
       display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      justify-content: center;
+      overflow-x: auto;
+      gap: 10px;
+      padding-bottom: 5px;
+      scroll-behavior: smooth;
+      max-width: 100%;
     }
     .portfolio-images img {
+      flex: none;
       width: 120px;
       height: 120px;
       object-fit: cover;
       border-radius: 8px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      cursor: pointer;
     }
-    /* Кнопка редактирования профиля */
+
+    /* ------------------- Кнопки профиля и заказа ------------------- */
     .edit-btn {
       display: inline-block;
       margin-bottom: 25px;
@@ -123,7 +151,6 @@
     .edit-btn:hover {
       background-color: #0056b3;
     }
-    /* Кнопка "Оформить заказ" */
     .order-btn {
       display: block;
       width: 70%;
@@ -145,7 +172,8 @@
       opacity: 0.5;
       pointer-events: none;
     }
-    /* Блок выбора даты и времени */
+
+    /* ------------------- Блок выбора даты и времени ------------------- */
     .date-time-wrapper {
       display: flex;
       gap: 20px;
@@ -194,7 +222,7 @@
       cursor: pointer;
       border: 1px solid #ccc;
     }
-    /* Блок для чекбокса и кнопки "Оформить заказ" */
+
     .terms-order-container {
       margin-top: 25px;
     }
@@ -202,20 +230,8 @@
       text-align: center;
       margin-bottom: 15px;
     }
-    /* Стиль для занятых дат */
-    .busy-date a {
-      background-color: red !important;
-      color: white !important;
-    }
-    .ui-datepicker .ui-state-disabled {
-      opacity: 0.5;
-    }
-    /* Стили для сегодняшней даты (выделяем желтым) */
-    .today-date a {
-      background-color: yellow !important;
-      color: black !important;
-    }
-    /* ===== Стили для модального окна ===== */
+
+    /* ------------------- Модальное окно (КАЛЕНДАРЬ) ------------------- */
     .modal-overlay {
       position: fixed;
       top: 0; 
@@ -226,7 +242,7 @@
       display: none;
       justify-content: center;
       align-items: center;
-      z-index: 9999;
+      z-index: 9999; /* календарь */
     }
     .modal-content {
       background: #fff;
@@ -269,7 +285,6 @@
     .modal-btn:hover {
       background-color: #0056b3;
     }
-    /* Стиль для кнопки открытия модального окна */
     .modal-open-btn {
       margin-top: 10px;
       background-color: #ffc107;
@@ -283,7 +298,75 @@
     .modal-open-btn:hover {
       background-color: #e0a800;
     }
+
+    /* ------------------- Модальное окно (ИЗОБРАЖЕНИЯ, на весь экран) ------------------- */
+    /* ВАЖНО: другие классы, чтобы не конфликтовать с .modal-content для календаря */
+    #image-modal-wrapper {
+      position: fixed;
+      top: 0; 
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0,0,0,0.9);
+      display: none; /* скрыт по умолчанию */
+      z-index: 99999; /* выше, чем у календаря */
+      justify-content: center;
+      align-items: center;
+    }
+    #image-modal-wrapper.open {
+      display: flex;
+    }
+    #image-modal-close {
+      position: absolute;
+      top: 20px;
+      right: 35px;
+      font-size: 40px;
+      color: #fff;
+      cursor: pointer;
+      z-index: 1001;
+    }
+    .image-modal-img {
+      max-width: 90vw;
+      max-height: 90vh;
+      object-fit: contain;
+      display: block;
+      margin: 0 auto;
+    }
+    /* Стрелки */
+    .modal-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 60px;
+      color: #fff;
+      background: none;
+      border: none;
+      cursor: pointer;
+      z-index: 1001;
+    }
+    .modal-left {
+      left: 20px;
+    }
+    .modal-right {
+      right: 20px;
+    }
+
+    /* ------------------- Стили занятых дат ------------------- */
+    .busy-date a {
+      background-color: red !important;
+      color: white !important;
+    }
+    .ui-datepicker .ui-state-disabled {
+      opacity: 0.5;
+    }
+    /* Подсветка сегодняшней даты */
+    .today-date a {
+      background-color: yellow !important;
+      color: black !important;
+    }
   </style>
+
+  <!-- Telegram WebApp API (если нужно) -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script>
     if (window.Telegram && window.Telegram.WebApp) {
@@ -321,13 +404,17 @@
       <p>{{ photographer.description }}</p>
     </div>
     
-    <!-- Портфолио -->
+    <!-- Портфолио с кнопками-стрелками -->
     <div class="portfolio">
       <h3>Портфолио</h3>
-      <div class="portfolio-images">
-        {% for image in photographer.portfolio_list %}
-          <img src="{{ image }}" alt="Portfolio Image">
-        {% endfor %}
+      <div class="portfolio-container">
+        <button class="arrow" onclick="scrollLeftProfile()">‹</button>
+        <div class="portfolio-images" id="portfolio-profile-{{ photographer.id }}">
+          {% for image in photographer.portfolio_list %}
+            <img src="{{ image }}" alt="Portfolio Image">
+          {% endfor %}
+        </div>
+        <button class="arrow" onclick="scrollRightProfile()">›</button>
       </div>
     </div>
     
@@ -360,7 +447,7 @@
     </div>
   </div>
   
-  <!-- Модальное окно для редактирования календаря -->
+  <!-- Модальное окно (КАЛЕНДАРЬ) -->
   <div class="modal-overlay" id="modal-overlay">
     <div class="modal-content">
       <span class="modal-close" id="modal-close">&times;</span>
@@ -370,24 +457,31 @@
     </div>
   </div>
   
-  <!-- Подключаем jQuery, jQuery UI и локализацию для Datepicker -->
+  <!-- Модальное окно (ИЗОБРАЖЕНИЯ) - на весь экран -->
+  <div id="image-modal-wrapper">
+    <span id="image-modal-close">&times;</span>
+    <img id="modal-image" class="image-modal-img" src="" alt="Portfolio Image">
+    <button id="modal-left" class="modal-arrow modal-left">‹</button>
+    <button id="modal-right" class="modal-arrow modal-right">›</button>
+  </div>
+  
+  <!-- Подключаем jQuery, jQuery UI и локализацию Datepicker -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/i18n/datepicker-ru.min.js"></script>
+
   <script>
+    /* ------------------ Календарь просмотра ------------------ */
     $.datepicker.setDefaults($.datepicker.regional["ru"]);
-    
-    // Получаем занятые даты, переданные с сервера (например: "01-01-2025, 02-01-2025")
+
     let unavailableDatesStr = "{{ unavailable_dates }}";
     let unavailableDates = [];
     if (unavailableDatesStr.trim().length > 0) {
       unavailableDates = unavailableDatesStr.split(",").map(s => s.trim());
     }
-    
-    // Инициализация календаря для просмотра
     $("#datepicker-view").datepicker({
       dateFormat: "dd-mm-yy",
-      firstDay: 1, // Неделя начинается с понедельника
+      firstDay: 1,
       beforeShowDay: function(date) {
         let today = new Date();
         today.setHours(0,0,0,0);
@@ -401,12 +495,12 @@
         if (unavailableDates.indexOf(d) !== -1) {
           return [true, "busy-date", "Недоступно"];
         }
-        var day = date.getDay();
+        let day = date.getDay();
         return (day === 0 || day === 6) ? [false, "unavailable", "Фотограф недоступен"] : [true, "available", "Доступно"];
       }
     });
-    
-    // Инициализация спиннеров времени
+
+    /* ------------------ Спиннеры времени ------------------ */
     $(function() {
       for (let h = 0; h < 24; h++) {
         let hh = (h < 10 ? "0" + h : h);
@@ -419,7 +513,7 @@
       }
       $("#hour-spinner").val("12");
       $("#minute-spinner").val("0");
-      
+
       $("#terms-checkbox").change(function(){
         if(this.checked){
           $("#order-btn").removeClass("disabled").css({"pointer-events": "auto", "opacity": "1"});
@@ -428,12 +522,12 @@
         }
       });
     });
-    
-    // Модальное окно для редактирования календаря
+
+    /* ------------------ Модальное окно (КАЛЕНДАРЬ) ------------------ */
     const modalOverlay = $("#modal-overlay");
     const openModalBtn = $("#open-modal");
     const closeModalBtn = $("#modal-close");
-    
+
     openModalBtn.on("click", () => {
       modalOverlay.css("display", "flex");
     });
@@ -445,12 +539,77 @@
         modalOverlay.css("display", "none");
       }
     });
-    
-    // Календарь редактирования
+
+    /* ------------------ Модальное окно (ИЗОБРАЖЕНИЯ) ------------------ */
+    let currentPortfolio = [];
+    let currentIndex = 0;
+    const imageModalWrapper = $("#image-modal-wrapper");
+    const modalImg = $("#modal-image");
+
+    // При клике на миниатюру
+    $(".portfolio-images img").on("click", function() {
+      const portfolioContainer = $(this).closest(".portfolio-images");
+      currentPortfolio = [];
+      portfolioContainer.find("img").each(function(){
+         currentPortfolio.push($(this).attr("src"));
+      });
+      currentIndex = portfolioContainer.find("img").index($(this));
+      modalImg.attr("src", currentPortfolio[currentIndex]);
+
+      // Показываем полноэкранное модальное окно
+      imageModalWrapper.addClass("open");
+    });
+
+    // Закрытие окна по кнопке
+    $("#image-modal-close").on("click", function() {
+      imageModalWrapper.removeClass("open");
+    });
+
+    // Закрытие окна при клике по фону (если хотите закрывать и так)
+    imageModalWrapper.on("click", function(e) {
+      // Проверяем, что клик был по самому wrapper, а не по картинке или стрелкам
+      if (e.target.id === "image-modal-wrapper") {
+        imageModalWrapper.removeClass("open");
+      }
+    });
+
+    // Навигация по стрелкам
+    $("#modal-left").on("click", function(e) {
+      e.stopPropagation();
+      if(currentPortfolio.length > 0) {
+        currentIndex = (currentIndex - 1 + currentPortfolio.length) % currentPortfolio.length;
+        modalImg.attr("src", currentPortfolio[currentIndex]);
+      }
+    });
+    $("#modal-right").on("click", function(e) {
+      e.stopPropagation();
+      if(currentPortfolio.length > 0) {
+        currentIndex = (currentIndex + 1) % currentPortfolio.length;
+        modalImg.attr("src", currentPortfolio[currentIndex]);
+      }
+    });
+
+    /* ------------------ Горизонтальная прокрутка портфолио в профиле ------------------ */
+    function scrollLeftProfile() {
+      const el = document.getElementById("portfolio-profile-{{ photographer.id }}");
+      if (el) {
+        el.scrollBy({ left: -80, behavior: 'smooth' });
+      }
+    }
+    function scrollRightProfile() {
+      const el = document.getElementById("portfolio-profile-{{ photographer.id }}");
+      if (el) {
+        el.scrollBy({ left: 80, behavior: 'smooth' });
+      }
+    }
+    window.scrollLeftProfile = scrollLeftProfile;
+    window.scrollRightProfile = scrollRightProfile;
+
+    /* ------------------ Календарь редактирования ------------------ */
     let editingDates = [...unavailableDates];
     $("#datepicker-edit").datepicker({
       dateFormat: "dd-mm-yy",
-      firstDay: 1, // Неделя начинается с понедельника
+      firstDay: 1,
       minDate: 0,
       beforeShowDay: function(date) {
         let d = $.datepicker.formatDate("dd-mm-yy", date);
@@ -469,7 +628,7 @@
         $(this).datepicker("refresh");
       }
     });
-    
+
     // Сохранение изменений календаря через AJAX
     $("#save-calendar").on("click", function() {
       $.post("{{ url_for('edit_calendar', photographer_id=photographer.id) }}", {
