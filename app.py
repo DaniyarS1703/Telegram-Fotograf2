@@ -149,7 +149,35 @@ def update_country():
         return jsonify({'success': True})
     return jsonify({'success': False}), 404
 
-# --- Маршрут для перехода в роль фотографа ---
+# --- Новый маршрут для обновления аватара клиента ---
+@app.route('/update_avatar', methods=['POST'])
+def update_avatar():
+    if 'avatar' not in request.files:
+        return jsonify(success=False, error="Файл не найден"), 400
+    file = request.files['avatar']
+    if file.filename == '':
+        return jsonify(success=False, error="Имя файла пустое"), 400
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+    if '.' not in file.filename or file.filename.rsplit('.', 1)[1].lower() not in ALLOWED_EXTENSIONS:
+        return jsonify(success=False, error="Недопустимый тип файла"), 400
+    tg_id = request.form.get('tg_id')
+    if not tg_id:
+        return jsonify(success=False, error="tg_id не указан"), 400
+    try:
+        result = cloudinary.uploader.upload(file)
+    except Exception as e:
+        return jsonify(success=False, error=str(e)), 500
+    avatar_url = result.get('secure_url')
+    public_id = result.get('public_id')
+    client = Client.query.filter_by(telegram_id=tg_id).first()
+    if client:
+        client.avatar = avatar_url
+        client.avatar_public_id = public_id
+        db.session.commit()
+        return jsonify(success=True, avatar_url=avatar_url)
+    else:
+        return jsonify(success=False, error="Клиент не найден"), 404
+
 @app.route('/switch_role', methods=['GET', 'POST'])
 def switch_role():
     tg_id = request.args.get('tg_id')
@@ -211,8 +239,6 @@ def switch_role():
 
         return redirect(url_for('profile', id=new_photographer.id))
 
-    # Для GET-запроса создаём dummy-объект photographer на основе данных клиента,
-    # чтобы базовый шаблон отображал стандартный header (аватар, имя, город и т.д.)
     dummy_photographer = {
         "name": client.name,
         "avatar": None,  # Здесь можно указать путь к дефолтному аватару, если требуется
@@ -221,9 +247,7 @@ def switch_role():
         "description": ""
     }
     return render_template('switch_role.html', client=client, photographer=dummy_photographer)
-# --- Конец маршрута switch_role ---
 
-# --- Маршрут редактирования профиля ---
 @app.route('/edit_profile/<int:id>', methods=['GET', 'POST'])
 def edit_profile(id):
     photographer = Photographer.query.get_or_404(id)
@@ -233,7 +257,6 @@ def edit_profile(id):
     cities = []
     for country, city_list in cities_grouped.items():
         for city in city_list:
-            # Предполагается, что city["name"] содержит название города
             cities.append(city["name"])
     cities = sorted(set(cities))
     
@@ -278,9 +301,7 @@ def edit_profile(id):
     
     photographer.portfolio_list = photographer.get_portfolio()
     return render_template('edit_profile.html', photographer=photographer, cities=cities)
-# --- Конец маршрута редактирования профиля ---
 
-# --- Маршрут редактирования календаря ---
 @app.route('/edit_calendar/<int:photographer_id>', methods=['POST'])
 def edit_calendar(photographer_id):
     from models import UnavailableDate  # Убедитесь, что модель UnavailableDate определена в models.py
@@ -305,9 +326,7 @@ def edit_calendar(photographer_id):
     
     db.session.commit()
     return jsonify({"success": True, "message": "Calendar updated"}), 200
-# --- Конец маршрута редактирования календаря ---
 
-# --- Маршрут для бронирования даты ---
 @app.route('/book', methods=['POST'])
 def book():
     photographer_id = request.form.get('photographer_id')
@@ -338,9 +357,7 @@ def book():
     db.session.commit()
 
     return redirect(url_for('profile', id=photographer_id))
-# --- Конец маршрута бронирования даты ---
 
-# --- Маршрут загрузки файла (для теста) ---
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -362,9 +379,7 @@ def upload_file():
         except Exception as e:
             return f"Ошибка при загрузке файла: {e}", 500
     return render_template('upload.html')
-# --- Конец маршрута загрузки файла ---
 
-# --- Маршрут для удаления аватарки ---
 @app.route('/delete_avatar', methods=['POST'])
 def delete_avatar():
     data = request.get_json()
@@ -387,7 +402,6 @@ def delete_avatar():
             return jsonify({'success': False, 'error': 'Ошибка удаления на Cloudinary'}), 500
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
-# --- Конец маршрута удаления аватарки ---
 
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
@@ -395,7 +409,6 @@ from flask_admin.contrib.sqla import ModelView
 admin = Admin(app, name='Админ-панель', template_mode='bootstrap3')
 admin.add_view(ModelView(Photographer, db.session))
 admin.add_view(ModelView(Client, db.session))
-# --- Конец интеграции Flask-Admin ---
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

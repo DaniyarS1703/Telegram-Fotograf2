@@ -36,6 +36,9 @@ class Client(db.Model):
     description = db.Column(db.Text)
     city = db.Column(db.Text)
     country = db.Column(db.Text)
+    # Новые поля для аватара
+    avatar = db.Column(db.Text)
+    avatar_public_id = db.Column(db.Text)
 
 
 # Модель Booking для бронирования
@@ -49,7 +52,6 @@ class Booking(db.Model):
     booking_time = db.Column(db.Time, nullable=True)   # Время бронирования (опционально)
     status = db.Column(db.String(50), default='pending') # Статус бронирования (например, pending, confirmed, canceled)
 
-    # Устанавливаем связи
     photographer = db.relationship('Photographer', backref=db.backref('bookings', lazy=True))
     client = db.relationship('Client', backref=db.backref('bookings', lazy=True))
 

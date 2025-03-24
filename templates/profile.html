@@ -10,7 +10,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.css">
   <!-- Подключаем Font Awesome для иконок -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
   <style>
     /* ------------------- Общие стили страницы ------------------- */
     body {
@@ -36,7 +35,7 @@
       font-weight: bold;
       color: #333;
       text-decoration: none;
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255,255,255,0.9);
       border-radius: 50%;
       width: 45px;
       height: 45px;
@@ -87,7 +86,7 @@
       font-size: 18px;
       color: #444;
     }
-
+    
     /* ------------------- Портфолио с кнопками-стрелками ------------------- */
     .portfolio {
       margin-bottom: 25px;
@@ -135,7 +134,7 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       cursor: pointer;
     }
-
+    
     /* ------------------- Кнопки профиля и заказа ------------------- */
     .edit-btn {
       display: inline-block;
@@ -172,7 +171,7 @@
       opacity: 0.5;
       pointer-events: none;
     }
-
+    
     /* ------------------- Блок выбора даты и времени ------------------- */
     .date-time-wrapper {
       display: flex;
@@ -222,7 +221,6 @@
       cursor: pointer;
       border: 1px solid #ccc;
     }
-
     .terms-order-container {
       margin-top: 25px;
     }
@@ -230,19 +228,17 @@
       text-align: center;
       margin-bottom: 15px;
     }
-
+    
     /* ------------------- Модальное окно (КАЛЕНДАРЬ) ------------------- */
     .modal-overlay {
       position: fixed;
-      top: 0; 
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       background: rgba(0,0,0,0.5);
       display: none;
       justify-content: center;
       align-items: center;
-      z-index: 9999; /* календарь */
+      z-index: 9999;
     }
     .modal-content {
       background: #fff;
@@ -254,20 +250,15 @@
     }
     .modal-close {
       position: absolute;
-      top: 10px;
-      right: 10px;
+      top: 10px; right: 10px;
       cursor: pointer;
       font-size: 20px;
       color: #aaa;
     }
-    .modal-close:hover {
-      color: #000;
-    }
+    .modal-close:hover { color: #000; }
     .modal-title {
-      margin-top: 0;
-      margin-bottom: 10px;
-      font-size: 20px;
-      text-align: center;
+      margin-top: 0; margin-bottom: 10px;
+      font-size: 20px; text-align: center;
     }
     .modal-btn {
       display: inline-block;
@@ -279,12 +270,9 @@
       border-radius: 5px;
       font-size: 16px;
       transition: background-color 0.3s ease;
-      border: none;
-      cursor: pointer;
+      border: none; cursor: pointer;
     }
-    .modal-btn:hover {
-      background-color: #0056b3;
-    }
+    .modal-btn:hover { background-color: #0056b3; }
     .modal-open-btn {
       margin-top: 10px;
       background-color: #ffc107;
@@ -295,31 +283,24 @@
       cursor: pointer;
       transition: background-color 0.3s ease;
     }
-    .modal-open-btn:hover {
-      background-color: #e0a800;
-    }
-
+    .modal-open-btn:hover { background-color: #e0a800; }
+    
     /* ------------------- Модальное окно (ИЗОБРАЖЕНИЯ, на весь экран) ------------------- */
-    /* ВАЖНО: другие классы, чтобы не конфликтовать с .modal-content для календаря */
+    /* Используем отдельные классы, чтобы не конфликтовать с календарём */
     #image-modal-wrapper {
       position: fixed;
-      top: 0; 
-      left: 0;
-      width: 100vw;
-      height: 100vh;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
       background-color: rgba(0,0,0,0.9);
-      display: none; /* скрыт по умолчанию */
-      z-index: 99999; /* выше, чем у календаря */
+      display: none;
+      z-index: 99999;
       justify-content: center;
       align-items: center;
     }
-    #image-modal-wrapper.open {
-      display: flex;
-    }
+    #image-modal-wrapper.open { display: flex; }
     #image-modal-close {
       position: absolute;
-      top: 20px;
-      right: 35px;
+      top: 20px; right: 35px;
       font-size: 40px;
       color: #fff;
       cursor: pointer;
@@ -331,15 +312,17 @@
       object-fit: contain;
       display: block;
       margin: 0 auto;
-      /* Начальное состояние (масштаб 1) */
-      transform: scale(1);
+      transform: scale(1) translate(0px, 0px);
       transition: transform 0.1s ease-out;
+      cursor: grab;
+      /* Отключаем стандартное браузерное перетаскивание */
+      -webkit-user-drag: none;
+      user-drag: none;
     }
-    /* Стрелки */
+    /* Стрелки навигации в модальном окне изображений */
     .modal-arrow {
       position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
+      top: 50%; transform: translateY(-50%);
       font-size: 60px;
       color: #fff;
       background: none;
@@ -347,29 +330,21 @@
       cursor: pointer;
       z-index: 1001;
     }
-    .modal-left {
-      left: 20px;
-    }
-    .modal-right {
-      right: 20px;
-    }
+    .modal-left { left: 20px; }
+    .modal-right { right: 20px; }
 
     /* ------------------- Стили занятых дат ------------------- */
     .busy-date a {
       background-color: red !important;
       color: white !important;
     }
-    .ui-datepicker .ui-state-disabled {
-      opacity: 0.5;
-    }
-    /* Подсветка сегодняшней даты */
+    .ui-datepicker .ui-state-disabled { opacity: 0.5; }
     .today-date a {
       background-color: yellow !important;
       color: black !important;
     }
   </style>
-
-  <!-- Telegram WebApp API (если нужно) -->
+  
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script>
     if (window.Telegram && window.Telegram.WebApp) {
@@ -460,10 +435,10 @@
     </div>
   </div>
   
-  <!-- Модальное окно (ИЗОБРАЖЕНИЯ) - на весь экран -->
+  <!-- Модальное окно (ИЗОБРАЖЕНИЯ, на весь экран) -->
   <div id="image-modal-wrapper">
     <span id="image-modal-close">&times;</span>
-    <img id="modal-image" class="image-modal-img" src="" alt="Portfolio Image">
+    <img id="modal-image" class="image-modal-img" src="" alt="Portfolio Image" draggable="false">
     <button id="modal-left" class="modal-arrow modal-left">‹</button>
     <button id="modal-right" class="modal-arrow modal-right">›</button>
   </div>
@@ -472,11 +447,9 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/i18n/datepicker-ru.min.js"></script>
-
   <script>
-    /* ------------------ Календарь просмотра ------------------ */
+    /* ------------------ Инициализация календаря просмотра ------------------ */
     $.datepicker.setDefaults($.datepicker.regional["ru"]);
-
     let unavailableDatesStr = "{{ unavailable_dates }}";
     let unavailableDates = [];
     if (unavailableDatesStr.trim().length > 0) {
@@ -488,22 +461,16 @@
       beforeShowDay: function(date) {
         let today = new Date();
         today.setHours(0,0,0,0);
-        if (date < today) {
-          return [false, "ui-state-disabled", "Прошедшая дата"];
-        }
-        if (date.getTime() === today.getTime()) {
-          return [true, "today-date", "Сегодня"];
-        }
+        if (date < today) return [false, "ui-state-disabled", "Прошедшая дата"];
+        if (date.getTime() === today.getTime()) return [true, "today-date", "Сегодня"];
         let d = $.datepicker.formatDate("dd-mm-yy", date);
-        if (unavailableDates.indexOf(d) !== -1) {
-          return [true, "busy-date", "Недоступно"];
-        }
+        if (unavailableDates.indexOf(d) !== -1) return [true, "busy-date", "Недоступно"];
         let day = date.getDay();
         return (day === 0 || day === 6) ? [false, "unavailable", "Фотограф недоступен"] : [true, "available", "Доступно"];
       }
     });
-
-    /* ------------------ Спиннеры времени ------------------ */
+    
+    /* ------------------ Инициализация спиннеров времени ------------------ */
     $(function() {
       for (let h = 0; h < 24; h++) {
         let hh = (h < 10 ? "0" + h : h);
@@ -516,7 +483,6 @@
       }
       $("#hour-spinner").val("12");
       $("#minute-spinner").val("0");
-
       $("#terms-checkbox").change(function(){
         if(this.checked){
           $("#order-btn").removeClass("disabled").css({"pointer-events": "auto", "opacity": "1"});
@@ -525,31 +491,29 @@
         }
       });
     });
-
+    
     /* ------------------ Модальное окно (КАЛЕНДАРЬ) ------------------ */
     const modalOverlay = $("#modal-overlay");
-    const openModalBtn = $("#open-modal");
-    const closeModalBtn = $("#modal-close");
-
-    openModalBtn.on("click", () => {
-      modalOverlay.css("display", "flex");
-    });
-    closeModalBtn.on("click", () => {
-      modalOverlay.css("display", "none");
-    });
-    modalOverlay.on("click", (e) => {
-      if ($(e.target).is("#modal-overlay")) {
-        modalOverlay.css("display", "none");
-      }
-    });
-
-    /* ------------------ Модальное окно (ИЗОБРАЖЕНИЯ) ------------------ */
+    $("#open-modal").on("click", () => modalOverlay.css("display", "flex"));
+    $("#modal-close").on("click", () => modalOverlay.css("display", "none"));
+    modalOverlay.on("click", (e) => { if ($(e.target).is("#modal-overlay")) modalOverlay.css("display", "none"); });
+    
+    /* ------------------ Модальное окно (ИЗОБРАЖЕНИЯ) с drag/zoom ------------------ */
     let currentPortfolio = [];
     let currentIndex = 0;
     const imageModalWrapper = $("#image-modal-wrapper");
     const modalImg = $("#modal-image");
-
-    // При клике на миниатюру
+    
+    // Функция сброса зума и смещения
+    let zoomScale = 1, originX = 0, originY = 0;
+    function resetZoom() {
+      zoomScale = 1;
+      originX = 0;
+      originY = 0;
+      modalImg.css("transform", `scale(${zoomScale}) translate(0px, 0px)`);
+    }
+    
+    // Открытие модального окна по клику на миниатюру
     $(".portfolio-images img").on("click", function() {
       const portfolioContainer = $(this).closest(".portfolio-images");
       currentPortfolio = [];
@@ -558,35 +522,30 @@
       });
       currentIndex = portfolioContainer.find("img").index($(this));
       modalImg.attr("src", currentPortfolio[currentIndex]);
-
-      // Показываем полноэкранное модальное окно
+      resetZoom();
+      attachDragHandlers();
       imageModalWrapper.addClass("open");
-      // Сбрасываем масштаб (зум) на 1 при открытии
-      zoomScale = 1;
-      modalImg.css("transform", "scale(1)");
     });
-
-    // Закрытие окна по кнопке
+    
     $("#image-modal-close").on("click", function() {
       imageModalWrapper.removeClass("open");
+      detachDragHandlers();
     });
-
-    // Закрытие окна при клике по фону
+    
     imageModalWrapper.on("click", function(e) {
       if (e.target.id === "image-modal-wrapper") {
         imageModalWrapper.removeClass("open");
+        detachDragHandlers();
       }
     });
-
+    
     // Навигация по стрелкам
     $("#modal-left").on("click", function(e) {
       e.stopPropagation();
       if(currentPortfolio.length > 0) {
         currentIndex = (currentIndex - 1 + currentPortfolio.length) % currentPortfolio.length;
         modalImg.attr("src", currentPortfolio[currentIndex]);
-        // Сброс зума
-        zoomScale = 1;
-        modalImg.css("transform", "scale(1)");
+        resetZoom();
       }
     });
     $("#modal-right").on("click", function(e) {
@@ -594,43 +553,85 @@
       if(currentPortfolio.length > 0) {
         currentIndex = (currentIndex + 1) % currentPortfolio.length;
         modalImg.attr("src", currentPortfolio[currentIndex]);
-        // Сброс зума
-        zoomScale = 1;
-        modalImg.css("transform", "scale(1)");
+        resetZoom();
       }
     });
-
-    // Только зум колёсиком, без перетаскивания
-    let zoomScale = 1;
-    modalImg.on("wheel", function(e) {
-      e.preventDefault();
-      let delta = e.originalEvent.deltaY;
-      if(delta < 0) {
-        // крутим колёсико "вверх" => увеличиваем
-        zoomScale += 0.1;
-      } else {
-        // крутим колёсико "вниз" => уменьшаем, но не меньше 1
-        zoomScale = Math.max(1, zoomScale - 0.1);
-      }
-      modalImg.css("transform", `scale(${zoomScale})`);
-    });
-
+    
     /* ------------------ Горизонтальная прокрутка портфолио в профиле ------------------ */
     function scrollLeftProfile() {
       const el = document.getElementById("portfolio-profile-{{ photographer.id }}");
-      if (el) {
-        el.scrollBy({ left: -80, behavior: 'smooth' });
-      }
+      if (el) el.scrollBy({ left: -80, behavior: 'smooth' });
     }
     function scrollRightProfile() {
       const el = document.getElementById("portfolio-profile-{{ photographer.id }}");
-      if (el) {
-        el.scrollBy({ left: 80, behavior: 'smooth' });
-      }
+      if (el) el.scrollBy({ left: 80, behavior: 'smooth' });
     }
     window.scrollLeftProfile = scrollLeftProfile;
     window.scrollRightProfile = scrollRightProfile;
-
+    
+    /* ------------------ Drag/Zoom для модального изображения ------------------ */
+    let isDragging = false, startX = 0, startY = 0;
+    let currentTranslateX = 0, currentTranslateY = 0;
+    let activePointerId = null;
+    const sensitivity = 0.4;
+    
+    function attachDragHandlers() {
+      modalImg.on("wheel", function(e) {
+        e.preventDefault();
+        let delta = e.originalEvent.deltaY;
+        if(delta < 0) zoomScale += 0.1;
+        else zoomScale = Math.max(1, zoomScale - 0.1);
+        modalImg.css("transform", `scale(${zoomScale}) translate(${originX}px, ${originY}px)`);
+      });
+      modalImg.on("pointerdown", function(e) {
+  if(e.button !== 0) return;
+  if(zoomScale > 1) {
+    isDragging = true;
+    activePointerId = e.originalEvent.pointerId;
+    startX = e.clientX;
+    startY = e.clientY;
+    // Используем уже сохранённые значения, без повторного считывания
+    currentTranslateX = originX;
+    currentTranslateY = originY;
+    modalImg[0].setPointerCapture(e.originalEvent.pointerId);
+    modalImg.css("cursor", "grabbing");
+    $(document).on("pointermove.modalImg", pointerMoveHandler);
+    $(document).on("pointerup.modalImg pointercancel.modalImg", pointerUpHandler);
+  }
+});
+    }
+    
+    function pointerMoveHandler(e) {
+      if(isDragging && e.originalEvent.pointerId === activePointerId) {
+        let dx = e.clientX - startX;
+        let dy = e.clientY - startY;
+        let newTranslateX = currentTranslateX + dx * sensitivity;
+        let newTranslateY = currentTranslateY + dy * sensitivity;
+        originX = newTranslateX;
+        originY = newTranslateY;
+        modalImg.css("transform", `scale(${zoomScale}) translate(${newTranslateX}px, ${newTranslateY}px)`);
+      }
+    }
+    
+    function pointerUpHandler(e) {
+      if(isDragging && e.originalEvent.pointerId === activePointerId) {
+        let dx = e.clientX - startX;
+        let dy = e.clientY - startY;
+        currentTranslateX += dx * sensitivity;
+        currentTranslateY += dy * sensitivity;
+        isDragging = false;
+        modalImg.css("cursor", "grab");
+        modalImg[0].releasePointerCapture(activePointerId);
+        activePointerId = null;
+        $(document).off("pointermove.modalImg pointerup.modalImg pointercancel.modalImg");
+      }
+    }
+    
+    function detachDragHandlers() {
+      modalImg.off("wheel pointerdown");
+      $(document).off("pointermove.modalImg pointerup.modalImg pointercancel.modalImg");
+    }
+    
     /* ------------------ Календарь редактирования ------------------ */
     let editingDates = [...unavailableDates];
     $("#datepicker-edit").datepicker({
@@ -639,10 +640,7 @@
       minDate: 0,
       beforeShowDay: function(date) {
         let d = $.datepicker.formatDate("dd-mm-yy", date);
-        if (editingDates.indexOf(d) !== -1) {
-          return [true, "busy-date", "Выбрано"];
-        }
-        return [true, "", "Доступно"];
+        return (editingDates.indexOf(d) !== -1) ? [true, "busy-date", "Выбрано"] : [true, "", "Доступно"];
       },
       onSelect: function(dateText, inst) {
         let index = editingDates.indexOf(dateText);
@@ -654,8 +652,7 @@
         $(this).datepicker("refresh");
       }
     });
-
-    // Сохранение изменений календаря через AJAX
+    
     $("#save-calendar").on("click", function() {
       $.post("{{ url_for('edit_calendar', photographer_id=photographer.id) }}", {
         unavailable_dates: editingDates.join(", ")
