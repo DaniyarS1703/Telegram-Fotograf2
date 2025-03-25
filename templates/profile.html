@@ -10,27 +10,44 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.css">
   <!-- Подключаем Font Awesome для иконок -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
   <style>
-    /* ------------------- Общие стили страницы ------------------- */
+    /* Основные CSS-переменные, основанные на золотом сечении (коэффициент ≈1.618) */
+    :root {
+      --base-font: 16px;
+      --golden: 1.618;
+      --heading-font: calc(var(--base-font) * var(--golden)); /* ≈26px */
+      --small-padding: 10px;
+      --large-padding: calc(var(--small-padding) * var(--golden)); /* ≈16px */
+      --border-radius: 8px;
+      --max-width: 800px;
+      --star-size: 1.2em;
+    }
+    /* Основной стиль страницы */
     body {
       margin: 0;
-      padding: 20px;
+      padding: var(--small-padding);
       font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
       background-color: #f0f2f5;
+      font-size: var(--base-font);
+      line-height: 1.5;
+      display: flex;
+      justify-content: center;
     }
     .profile-container {
-      max-width: 800px;
-      margin: 0 auto;
+      max-width: var(--max-width);
+      width: 100%;
       background: #fff;
-      padding: 30px;
-      border-radius: 8px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      position: relative;
+      padding: var(--large-padding);
+      border-radius: var(--border-radius);
+      box-shadow: 0 0.25rem 0.625rem rgba(0,0,0,0.1);
+      margin: var(--large-padding) auto;
     }
+    /* Кнопка выхода */
     .exit-btn {
       position: absolute;
-      top: 15px;
-      right: 15px;
+      top: var(--small-padding);
+      right: var(--small-padding);
       font-size: 28px;
       font-weight: bold;
       color: #333;
@@ -50,11 +67,15 @@
       background: #eee;
       color: #000;
     }
+    /* Шапка профиля */
     .profile-header {
       display: flex;
       align-items: center;
-      gap: 20px;
-      margin-bottom: 20px;
+      gap: var(--large-padding);
+      margin-bottom: var(--large-padding);
+      flex-wrap: wrap;
+      justify-content: center;
+      text-align: center;
     }
     .avatar {
       width: 130px;
@@ -64,48 +85,47 @@
       border: 2px solid #ddd;
     }
     .profile-info {
-      text-align: left;
       flex: 1;
     }
     .profile-info h2 {
       margin: 0;
-      font-size: 32px;
+      font-size: 2rem;
       color: #333;
     }
     .profile-info p {
-      margin: 5px 0;
+      margin: var(--small-padding) 0;
       color: #666;
-      font-size: 18px;
+      font-size: 1rem;
     }
-    /* Блок рейтинга со звёздами */
+    /* Блок рейтинга */
     .rating {
       color: #f5c518;
-      font-size: 1.2em;
-      margin-top: 5px;
+      font-size: var(--star-size);
+      margin-top: var(--small-padding);
     }
     .rating-value {
       font-size: 0.9em;
       color: #555;
-      margin-left: 5px;
+      margin-left: var(--small-padding);
     }
+    /* Описание профиля */
     .profile-description {
       background-color: #f7f7f7;
-      padding: 20px;
-      border-radius: 8px;
+      padding: var(--large-padding);
+      border-radius: var(--border-radius);
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      margin-bottom: 25px;
-      font-size: 18px;
+      margin-bottom: var(--large-padding);
+      font-size: 1rem;
       color: #444;
     }
-    
-    /* ------------------- Портфолио с кнопками-стрелками ------------------- */
+    /* Портфолио */
     .portfolio {
-      margin-bottom: 25px;
+      margin-bottom: var(--large-padding);
     }
     .portfolio h3 {
-      margin-bottom: 15px;
+      margin-bottom: var(--small-padding);
       text-align: center;
-      font-size: 24px;
+      font-size: 1.5rem;
       color: #333;
     }
     .portfolio-container {
@@ -123,7 +143,7 @@
       height: 36px;
       border-radius: 50%;
       cursor: pointer;
-      margin: 0 5px;
+      margin: 0 var(--small-padding);
     }
     .arrow:hover {
       background-color: #ddd;
@@ -131,8 +151,8 @@
     .portfolio-images {
       display: flex;
       overflow-x: auto;
-      gap: 10px;
-      padding-bottom: 5px;
+      gap: var(--small-padding);
+      padding-bottom: var(--small-padding);
       scroll-behavior: smooth;
       max-width: 100%;
     }
@@ -141,22 +161,22 @@
       width: 120px;
       height: 120px;
       object-fit: cover;
-      border-radius: 8px;
+      border-radius: var(--border-radius);
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       cursor: pointer;
     }
-    
-    /* ------------------- Кнопки профиля и заказа ------------------- */
+    /* Кнопки профиля и заказа */
     .edit-btn {
       display: inline-block;
-      margin-bottom: 25px;
-      padding: 10px 20px;
+      margin-bottom: var(--large-padding);
+      padding: var(--small-padding) var(--large-padding);
       background-color: #007bff;
       color: #fff;
       text-decoration: none;
-      border-radius: 5px;
-      font-size: 18px;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
       transition: background-color 0.3s ease;
+      text-align: center;
     }
     .edit-btn:hover {
       background-color: #0056b3;
@@ -164,14 +184,14 @@
     .order-btn {
       display: block;
       width: 70%;
-      margin: 30px auto;
-      padding: 15px 25px;
+      margin: var(--large-padding) auto;
+      padding: var(--small-padding) var(--large-padding);
       background-color: #28a745;
       color: #fff;
       text-align: center;
       text-decoration: none;
-      border-radius: 5px;
-      font-size: 20px;
+      border-radius: var(--border-radius);
+      font-size: 1.25rem;
       transition: background-color 0.3s ease, transform 0.2s ease;
     }
     .order-btn:hover {
@@ -182,65 +202,51 @@
       opacity: 0.5;
       pointer-events: none;
     }
-    
-    /* ------------------- Блок выбора даты и времени ------------------- */
+    /* Блок выбора даты и времени */
     .date-time-wrapper {
       display: flex;
-      gap: 20px;
+      gap: var(--large-padding);
       flex-wrap: wrap;
       justify-content: center;
-      margin-bottom: 25px;
+      margin-bottom: var(--large-padding);
     }
-    .date-selector {
+    .date-selector, .time-selector {
       flex: 1;
       max-width: 300px;
       background-color: #fff;
-      padding: 20px;
-      border-radius: 8px;
+      padding: var(--large-padding);
+      border-radius: var(--border-radius);
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
       text-align: center;
     }
-    .date-selector h3 {
-      margin: 0 0 10px;
-      font-size: 20px;
-      color: #333;
-    }
-    .time-selector {
-      width: 500px;
-      height: 110px;
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      text-align: center;
-      font-size: 20px;
-    }
-    .time-selector h3 {
-      margin: 0 0 15px;
+    .date-selector h3, .time-selector h3 {
+      margin: 0 0 var(--small-padding);
+      font-size: 1.25rem;
       color: #333;
     }
     .time-select-container {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 20px;
+      gap: var(--small-padding);
     }
     select.time-spinner {
-      font-size: 18px;
-      padding: 10px;
-      border-radius: 5px;
+      font-size: 1rem;
+      padding: var(--small-padding);
+      border-radius: var(--border-radius);
       cursor: pointer;
       border: 1px solid #ccc;
     }
     .terms-order-container {
-      margin-top: 25px;
+      margin-top: var(--large-padding);
     }
     .terms-container {
       text-align: center;
-      margin-bottom: 15px;
+      margin-bottom: var(--small-padding);
+      font-size: 1rem;
     }
     
-    /* ------------------- Модальное окно (КАЛЕНДАРЬ) ------------------- */
+    /* Модальное окно (Календарь) */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0;
@@ -253,50 +259,53 @@
     }
     .modal-content {
       background: #fff;
-      padding: 20px;
-      border-radius: 8px;
+      padding: var(--large-padding);
+      border-radius: var(--border-radius);
       width: 320px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.3);
       position: relative;
     }
     .modal-close {
       position: absolute;
-      top: 10px; right: 10px;
+      top: var(--small-padding);
+      right: var(--small-padding);
       cursor: pointer;
       font-size: 20px;
       color: #aaa;
     }
     .modal-close:hover { color: #000; }
     .modal-title {
-      margin-top: 0; margin-bottom: 10px;
-      font-size: 20px; text-align: center;
+      margin-top: 0; margin-bottom: var(--small-padding);
+      font-size: 1.25rem;
+      text-align: center;
     }
     .modal-btn {
       display: inline-block;
-      margin-top: 15px;
-      padding: 10px 20px;
+      margin-top: var(--small-padding);
+      padding: var(--small-padding) var(--large-padding);
       background-color: #007bff;
       color: #fff;
       text-decoration: none;
-      border-radius: 5px;
-      font-size: 16px;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
       transition: background-color 0.3s ease;
-      border: none; cursor: pointer;
+      border: none;
+      cursor: pointer;
     }
     .modal-btn:hover { background-color: #0056b3; }
     .modal-open-btn {
-      margin-top: 10px;
+      margin-top: var(--small-padding);
       background-color: #ffc107;
       border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
-      font-size: 16px;
+      padding: var(--small-padding) var(--large-padding);
+      border-radius: var(--border-radius);
+      font-size: 1rem;
       cursor: pointer;
       transition: background-color 0.3s ease;
     }
     .modal-open-btn:hover { background-color: #e0a800; }
     
-    /* ------------------- Модальное окно (ИЗОБРАЖЕНИЯ, на весь экран) ------------------- */
+    /* Модальное окно (Изображения) */
     #image-modal-wrapper {
       position: fixed;
       top: 0; left: 0;
@@ -310,7 +319,8 @@
     #image-modal-wrapper.open { display: flex; }
     #image-modal-close {
       position: absolute;
-      top: 20px; right: 35px;
+      top: var(--small-padding);
+      right: var(--small-padding);
       font-size: 40px;
       color: #fff;
       cursor: pointer;
@@ -330,7 +340,8 @@
     }
     .modal-arrow {
       position: absolute;
-      top: 50%; transform: translateY(-50%);
+      top: 50%; 
+      transform: translateY(-50%);
       font-size: 60px;
       color: #fff;
       background: none;
@@ -338,10 +349,10 @@
       cursor: pointer;
       z-index: 1001;
     }
-    .modal-left { left: 20px; }
-    .modal-right { right: 20px; }
+    .modal-left { left: var(--small-padding); }
+    .modal-right { right: var(--small-padding); }
     
-    /* ------------------- Стили занятых дат ------------------- */
+    /* Стили занятых дат */
     .busy-date a {
       background-color: red !important;
       color: white !important;
@@ -355,7 +366,7 @@
     /* Адаптивность для Telegram Web App */
     @media (max-width: 480px) {
       .profile-container {
-        padding: 10px;
+        padding: var(--small-padding);
       }
       .profile-header {
         flex-direction: column;
@@ -418,10 +429,9 @@
       </div>
     </div>
     
-    <!-- Условное отображение кнопок редактирования (доступны только если профиль принадлежит текущему пользователю) -->
-    {% if photographer.telegram_id == current_user_telegram_id %}
+    <!-- Кнопка редактирования профиля (показывается только для владельца) -->
+    {% if client and client.telegram_id == photographer.telegram_id %}
       <a href="{{ url_for('edit_profile', id=photographer.id) }}" class="edit-btn">Редактировать профиль</a>
-      <button id="open-modal" class="modal-open-btn">Редактировать календарь</button>
     {% endif %}
     
     <!-- Описание профиля -->
@@ -449,7 +459,9 @@
       <div class="date-selector">
         <h3>Выберите дату</h3>
         <div id="datepicker-view"></div>
-        <button id="open-modal" class="modal-open-btn">Редактировать календарь</button>
+        {% if client and client.telegram_id == photographer.telegram_id %}
+          <button id="open-modal" class="modal-open-btn">Редактировать календарь</button>
+        {% endif %}
       </div>
       <div class="time-selector">
         <h3>Выберите время</h3>
@@ -492,7 +504,7 @@
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/i18n/datepicker-ru.min.js"></script>
   <script>
-    /* ------------------ Инициализация календаря просмотра ------------------ */
+    /* Инициализация календаря просмотра */
     $.datepicker.setDefaults($.datepicker.regional["ru"]);
     let unavailableDatesStr = "{{ unavailable_dates }}";
     let unavailableDates = [];
@@ -514,7 +526,7 @@
       }
     });
     
-    /* ------------------ Инициализация спиннеров времени ------------------ */
+    /* Инициализация спиннеров времени */
     $(function() {
       for (let h = 0; h < 24; h++) {
         let hh = (h < 10 ? "0" + h : h);
@@ -536,13 +548,13 @@
       });
     });
     
-    /* ------------------ Модальное окно (Календарь) ------------------ */
+    /* Модальное окно (Календарь) */
     const modalOverlay = $("#modal-overlay");
     $("#open-modal").on("click", () => modalOverlay.css("display", "flex"));
     $("#modal-close").on("click", () => modalOverlay.css("display", "none"));
     modalOverlay.on("click", (e) => { if ($(e.target).is("#modal-overlay")) modalOverlay.css("display", "none"); });
     
-    /* ------------------ Модальное окно (Изображения) с drag/zoom ------------------ */
+    /* Модальное окно (Изображения) с drag/zoom */
     let currentPortfolio = [];
     let currentIndex = 0;
     const imageModalWrapper = $("#image-modal-wrapper");
