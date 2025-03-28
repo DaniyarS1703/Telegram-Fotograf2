@@ -245,7 +245,35 @@
       margin-bottom: var(--small-padding);
       font-size: 1rem;
     }
-    
+    /* Легенда календаря */
+    .datepicker-legend {
+      text-align: center;
+      margin-top: 5px;
+      font-size: 0.9em;
+      color: #333;
+    }
+
+#datepicker-view {
+  display: inline-block;
+  margin: 0 auto;
+}
+    .legend-box {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      background-color: red;
+      margin-right: 5px;
+      vertical-align: middle;
+      border: 1px solid #ccc;
+    }
+.legend-box.free {
+  background-color: #c8e6c9 !important;
+  border: 1px solid #2e7d32; /* для небольшого контраста, можно настроить */
+}
+
+.legend-box.busy {
+  background-color: red;
+}
     /* Модальное окно (Календарь) */
     .modal-overlay {
       position: fixed;
@@ -304,7 +332,6 @@
       transition: background-color 0.3s ease;
     }
     .modal-open-btn:hover { background-color: #e0a800; }
-    
     /* Модальное окно (Изображения) */
     #image-modal-wrapper {
       position: fixed;
@@ -357,11 +384,21 @@
       background-color: red !important;
       color: white !important;
     }
+
+.available a {
+  background-color: #c8e6c9 !important;
+  color: #2e7d32 !important;
+  border-radius: 4px;
+}
+
     .ui-datepicker .ui-state-disabled { opacity: 0.5; }
     .today-date a {
-      background-color: yellow !important;
-      color: black !important;
-    }
+  font-weight: bold;
+  background-color: inherit !important;
+  color: inherit !important;
+  border: 3px solid #000; /* Жирная черная окантовка */
+  border-radius: 4px;     /* Немного округляем углы, по желанию */
+}
     
     /* Адаптивность для Telegram Web App */
     @media (max-width: 480px) {
@@ -429,11 +466,10 @@
       </div>
     </div>
     
-<!-- Временный вывод для отладки -->
-<p>client.telegram_id: {{ client.telegram_id if client else 'Нет client' }}</p>
-<p>photographer.telegram_id: {{ photographer.telegram_id }}</p>
-
-
+    <!-- Временный вывод для отладки -->
+    <p>client.telegram_id: {{ client.telegram_id if client else 'Нет client' }}</p>
+    <p>photographer.telegram_id: {{ photographer.telegram_id }}</p>
+    
     <!-- Кнопка редактирования профиля (показывается только для владельца) -->
     {% if client and client.telegram_id == photographer.telegram_id %}
       <a href="{{ url_for('edit_profile', id=photographer.id) }}" class="edit-btn">Редактировать профиль</a>
@@ -460,22 +496,26 @@
     </div>
     
     <!-- Блок выбора даты и времени -->
-    <div class="date-time-wrapper">
-      <div class="date-selector">
-        <h3>Выберите дату</h3>
-        <div id="datepicker-view"></div>
-        {% if client and client.telegram_id == photographer.telegram_id %}
-          <button id="open-modal" class="modal-open-btn">Редактировать календарь</button>
-        {% endif %}
-      </div>
-      <div class="time-selector">
-        <h3>Выберите время</h3>
-        <div class="time-select-container">
-          <select id="hour-spinner" class="time-spinner"></select>
-          <select id="minute-spinner" class="time-spinner"></select>
-        </div>
-      </div>
+<div class="date-time-wrapper">
+  <div class="date-selector">
+    <h3>Выберите дату</h3>
+    <div id="datepicker-view"></div>
+    <div class="datepicker-legend">
+      <span class="legend-box free"></span> – свободен&nbsp;&nbsp;
+      <span class="legend-box busy"></span> – занят
     </div>
+    {% if client and client.telegram_id == photographer.telegram_id %}
+      <button id="open-modal" class="modal-open-btn">Редактировать календарь</button>
+    {% endif %}
+  </div>
+  <div class="time-selector">
+    <h3>Выберите время</h3>
+    <div class="time-select-container">
+      <select id="hour-spinner" class="time-spinner"></select>
+      <select id="minute-spinner" class="time-spinner"></select>
+    </div>
+  </div>
+</div>
     
     <!-- Блок для чекбокса и кнопки "Оформить заказ" -->
     <div class="terms-order-container">
@@ -517,19 +557,25 @@
       unavailableDates = unavailableDatesStr.split(",").map(s => s.trim());
     }
     $("#datepicker-view").datepicker({
-      dateFormat: "dd-mm-yy",
-      firstDay: 1,
-      beforeShowDay: function(date) {
-        let today = new Date();
-        today.setHours(0,0,0,0);
-        if (date < today) return [false, "ui-state-disabled", "Прошедшая дата"];
-        if (date.getTime() === today.getTime()) return [true, "today-date", "Сегодня"];
-        let d = $.datepicker.formatDate("dd-mm-yy", date);
-        if (unavailableDates.indexOf(d) !== -1) return [true, "busy-date", "Недоступно"];
-        let day = date.getDay();
-        return (day === 0 || day === 6) ? [false, "unavailable", "Фотограф недоступен"] : [true, "available", "Доступно"];
+  dateFormat: "dd-mm-yy",
+  firstDay: 1,
+  beforeShowDay: function(date) {
+    let today = new Date();
+    today.setHours(0,0,0,0);
+    if (date < today) return [false, "ui-state-disabled", "Прошедшая дата"];
+    let d = $.datepicker.formatDate("dd-mm-yy", date);
+    if (date.getTime() === today.getTime()) {
+      if (unavailableDates.indexOf(d) !== -1) {
+        return [true, "busy-date", "Недоступно"];
+      } else {
+        return [true, "available", "Сегодня"];
       }
-    });
+    }
+    if (unavailableDates.indexOf(d) !== -1) return [true, "busy-date", "Недоступно"];
+    return [true, "available", "Доступно"];
+  }
+});
+
     
     /* Инициализация спиннеров времени */
     $(function() {
