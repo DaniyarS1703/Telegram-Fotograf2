@@ -466,9 +466,6 @@
       </div>
     </div>
     
-    <!-- Временный вывод для отладки -->
-    <p>client.telegram_id: {{ client.telegram_id if client else 'Нет client' }}</p>
-    <p>photographer.telegram_id: {{ photographer.telegram_id }}</p>
     
     <!-- Кнопка редактирования профиля (показывается только для владельца) -->
     {% if client and client.telegram_id == photographer.telegram_id %}
