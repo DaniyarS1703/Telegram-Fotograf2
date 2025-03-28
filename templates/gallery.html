@@ -302,7 +302,8 @@
           </div>
           <!-- Кнопка "Перейти в профиль" -->
           <div class="profile-btn-container">
-            <a href="/profile/{{ photographer.id }}" class="profile-btn">Перейти в профиль</a>
+            <a href="{{ url_for('profile', id=photographer.id, tg_id=client.telegram_id) }}"
+   class="profile-btn">Перейти в профиль</a>
           </div>
         </div>
       {% endfor %}

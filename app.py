@@ -117,9 +117,15 @@ def profile(id):
         unavailable_dates.append(ud.date.strftime("%d-%m-%Y"))
     unavailable_dates_str = ", ".join(unavailable_dates)
     
+    tg_id = request.args.get('tg_id')
+    client = None
+    if tg_id:
+        client = Client.query.filter_by(telegram_id=tg_id).first()
+    
     return render_template('profile.html', 
                            photographer=photographer, 
-                           unavailable_dates=unavailable_dates_str)
+                           unavailable_dates=unavailable_dates_str,
+                           client=client)
 
 @app.route('/update_city', methods=['POST'])
 def update_city():
