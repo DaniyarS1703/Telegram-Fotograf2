@@ -194,10 +194,10 @@ def switch_role():
     if not client:
         return "Клиент не найден", 404
 
-    # Если фотограф уже существует, перенаправляем на профиль
+    # Если фотограф уже существует, перенаправляем на профиль с tg_id
     existing_photographer = Photographer.query.filter_by(telegram_id=client.telegram_id).first()
     if existing_photographer:
-        return redirect(url_for('profile', id=existing_photographer.id))
+        return redirect(url_for('profile', id=existing_photographer.id, tg_id=client.telegram_id))
 
     if request.method == 'POST':
         # Получаем поля формы
@@ -243,7 +243,7 @@ def switch_role():
         db.session.add(new_photographer)
         db.session.commit()
 
-        return redirect(url_for('profile', id=new_photographer.id))
+        return redirect(url_for('profile', id=new_photographer.id, tg_id=client.telegram_id))
 
     dummy_photographer = {
         "name": client.name,
@@ -253,6 +253,7 @@ def switch_role():
         "description": ""
     }
     return render_template('switch_role.html', client=client, photographer=dummy_photographer)
+
 
 @app.route('/edit_profile/<int:id>', methods=['GET', 'POST'])
 def edit_profile(id):

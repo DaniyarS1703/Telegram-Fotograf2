@@ -193,7 +193,9 @@
     <div class="button-container">
       <a href="javascript:goToGallery()" class="choose-btn">Выбрать фотографа</a>
       <br>
-      <a href="/switch_role?tg_id={{ client.telegram_id }}" class="photographer-btn">Я фотограф!</a>
+      {% if client %}
+        <a href="/switch_role?tg_id={{ client.telegram_id }}" class="photographer-btn">Я фотограф!</a>
+      {% endif %}
     </div>
   </div>
   
