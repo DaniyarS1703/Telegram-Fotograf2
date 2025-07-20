@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>EMOSHOW — Бегущая строка с отскоком fullscreen</title>
+  <style>
+    html, body {
+      margin: 0; padding: 0; height: 100%;
+      overflow: hidden;
+      background-color: black;
+      color: white;
+      font-size: 60px;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      position: relative;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    #marquee-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: visible;
+      white-space: nowrap;
+    }
+    #marquee {
+      position: absolute;
+      top: 0;
+      left: 0;
+      white-space: nowrap;
+      will-change: transform;
+      opacity: 1;
+      transition: opacity 0.3s ease;
+      max-width: none;
+      padding: 0;
+      margin: 0;
+      pointer-events: none;
+    }
+    /* Класс для многострочного текста с переносом и центрированием */
+    #marquee.bounce-multiline {
+      white-space: normal !important;
+      max-width: 75vw !important;
+      text-align: center;
+      left: 50% !important;       /* Центрируем горизонтально */
+      transform-origin: top left; /* Меняем точку трансформации для корректного позиционирования */
+      /* transform будет динамически обновляться из JS */
+    }
+  </style>
+</head>
+<body>
+  <div id="marquee-container">
+    <div id="marquee">Загрузка...</div>
+  </div>
+
+  <script>
+    const API_URL = "https://emoshow-bot.onrender.com/api/latest?apikey=77777";
+    const marquee = document.getElementById("marquee");
+
+    let speedPxPerSec = 100;
+    let posX, posY;
+    let velX, velY;
+    let direction = "left";
+
+    let containerWidth = 0;
+    let containerHeight = 0;
+    let textWidth = 0;
+    let textHeight = 0;
+    const margin = 5;
+
+    let lastText = "";
+    let lastDirection = "";
+    let lastSpeed = "";
+
+    function degToRad(deg) {
+      return deg * Math.PI / 180;
+    }
+
+    function initPositionAndVelocity() {
+      containerWidth = marquee.parentElement.offsetWidth;
+      containerHeight = marquee.parentElement.offsetHeight;
+
+      // Используем getBoundingClientRect для более точных размеров
+      const rect = marquee.getBoundingClientRect();
+      textWidth = rect.width;
+      textHeight = rect.height;
+
+      if (direction === "left") {
+        posX = containerWidth;
+        posY = (containerHeight - textHeight) / 2;
+        velX = -speedPxPerSec;
+        velY = 0;
+        marquee.classList.remove('bounce-multiline');
+        marquee.style.left = '0';
+        marquee.style.transformOrigin = 'top left';
+      } else if (direction === "bounce") {
+        if (marquee.classList.contains('bounce-multiline')) {
+          // При переносе фиксируем горизонтальный центр и двигаем только по вертикали
+          posX = 0; // сдвиг в трансформе будет учитывать левый отступ + 50% сдвига через left
+          posY = posY === undefined ? (containerHeight - textHeight) / 2 : posY;
+          velX = 0;
+          const signY = Math.random() < 0.5 ? 1 : -1;
+          velY = signY * speedPxPerSec;
+          marquee.style.left = '50%';
+          marquee.style.transformOrigin = 'top center';
+        } else {
+          // Обычный отскок под углом
+          if (posX === undefined || posY === undefined) {
+            posX = Math.random() * (containerWidth - textWidth - 2 * margin) + margin;
+            posY = Math.random() * (containerHeight - textHeight - 2 * margin) + margin;
+          }
+          const angleRad = degToRad(30);
+          const signX = Math.random() < 0.5 ? 1 : -1;
+          const signY = Math.random() < 0.5 ? 1 : -1;
+          velX = signX * speedPxPerSec * Math.cos(angleRad);
+          velY = signY * speedPxPerSec * Math.sin(angleRad);
+          marquee.classList.remove('bounce-multiline');
+          marquee.style.left = '0';
+          marquee.style.transformOrigin = 'top left';
+        }
+      }
+    }
+
+    function animate(timestamp) {
+      if (!animate.last) animate.last = timestamp;
+      const elapsed = (timestamp - animate.last) / 1000;
+      animate.last = timestamp;
+
+      if (posX === undefined || posY === undefined) {
+        initPositionAndVelocity();
+      }
+
+      if (direction === "left") {
+        posX += velX * elapsed;
+        if (posX < -textWidth) {
+          posX = containerWidth;
+        }
+        posY = (containerHeight - textHeight) / 2;
+        marquee.style.transform = `translate(${posX}px, ${posY}px)`;
+      } else if (direction === "bounce") {
+        if (marquee.classList.contains('bounce-multiline')) {
+          posY += velY * elapsed;
+
+          if (posY <= margin) {
+            posY = margin;
+            velY = -velY;
+          } else if (posY + textHeight >= containerHeight - margin) {
+            posY = containerHeight - textHeight - margin;
+            velY = -velY;
+          }
+          marquee.style.transform = `translateX(${posX}px) translateY(${posY}px) translateX(-50%)`;
+        } else {
+          posX += velX * elapsed;
+          posY += velY * elapsed;
+
+          if (posX <= margin) {
+            posX = margin;
+            velX = -velX;
+          } else if (posX + textWidth >= containerWidth - margin) {
+            posX = containerWidth - textWidth - margin;
+            velX = -velX;
+          }
+
+          if (posY <= margin) {
+            posY = margin;
+            velY = -velY;
+          } else if (posY + textHeight >= containerHeight - margin) {
+            posY = containerHeight - textHeight - margin;
+            velY = -velY;
+          }
+          marquee.style.transform = `translate(${posX}px, ${posY}px)`;
+        }
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    function updateMarquee(data) {
+      const textChanged = (data.text !== lastText);
+      const directionChanged = (data.direction !== lastDirection);
+      const speedChanged = (data.speed !== lastSpeed);
+
+      if (textChanged || directionChanged) {
+        marquee.style.opacity = 0;
+        setTimeout(() => {
+          marquee.textContent = data.text;
+          marquee.style.color = data.color;
+          document.body.style.backgroundColor = data.bg;
+          marquee.style.fontSize = data.size + "px";
+
+          const minSpeedPx = 100;
+          const maxSpeedPx = 600;
+          let speed = Number(data.speed);
+          speed = Math.min(Math.max(speed, 1), 10);
+          speedPxPerSec = minSpeedPx + (speed - 1) * (maxSpeedPx - minSpeedPx) / 9;
+
+          direction = data.direction || "left";
+
+          marquee.style.maxWidth = "none";
+          marquee.style.whiteSpace = "nowrap";
+
+          setTimeout(() => {
+            containerWidth = marquee.parentElement.offsetWidth;
+            containerHeight = marquee.parentElement.offsetHeight;
+
+            const rect = marquee.getBoundingClientRect();
+            textWidth = rect.width;
+            textHeight = rect.height;
+
+            if (direction === "bounce" && textWidth > containerWidth * 0.75) {
+              marquee.classList.add('bounce-multiline');
+              setTimeout(() => {
+                const rectNew = marquee.getBoundingClientRect();
+                textWidth = rectNew.width;
+                textHeight = rectNew.height;
+              }, 10);
+            } else {
+              marquee.classList.remove('bounce-multiline');
+            }
+
+            initPositionAndVelocity();
+            marquee.style.opacity = 1;
+          }, 50);
+        }, 300);
+      } else {
+        marquee.style.color = data.color;
+        document.body.style.backgroundColor = data.bg;
+        marquee.style.fontSize = data.size + "px";
+
+        const minSpeedPx = 100;
+        const maxSpeedPx = 600;
+        let speed = Number(data.speed);
+        speed = Math.min(Math.max(speed, 1), 10);
+
+        // Если скорость изменилась — сбрасываем анимацию, но не перезагружаем страницу
+        if (speed !== Number(lastSpeed)) {
+          speedPxPerSec = minSpeedPx + (speed - 1) * (maxSpeedPx - minSpeedPx) / 9;
+          initPositionAndVelocity();
+        } else {
+          speedPxPerSec = minSpeedPx + (speed - 1) * (maxSpeedPx - minSpeedPx) / 9;
+        }
+
+        if (directionChanged) {
+          direction = data.direction || "left";
+          initPositionAndVelocity();
+        }
+      }
+
+      lastText = data.text;
+      lastDirection = data.direction;
+      lastSpeed = data.speed;
+    }
+
+    async function fetchData() {
+      try {
+        const response = await fetch(API_URL);
+        if (!response.ok) throw new Error("Ошибка сети");
+        const data = await response.json();
+        updateMarquee(data);
+      } catch (error) {
+        console.error("Ошибка при получении данных:", error);
+      }
+    }
+
+    requestAnimationFrame(animate);
+    setInterval(fetchData, 5000);
+    fetchData();
+  </script>
+</body>
+</html>
